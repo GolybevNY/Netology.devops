@@ -12,3 +12,4 @@ first commit
 
 Second commit
 	В .gitignore будут указаны файлы и/или шаблоны, которые не будут добавляться в отслеживание git!
+modified in PyCharm
