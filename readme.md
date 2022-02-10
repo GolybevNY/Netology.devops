@@ -1,213 +1,223 @@
-# **ДОМАШНЕЕ ЗАДАНИЕ К ЗАНЯТИЮ "3.2. РАБОТА В ТЕРМИНАЛЕ, ЛЕКЦИЯ 2"** #
-
-1. Какого типа команда cd? Попробуйте объяснить, почему она именно такого типа; опишите ход своих мыслей, если считаете что она могла бы быть другого типа.
-Ответ:
-cd - это встроенная команда shell, она изменяет текущий рабочий каталог оболочки.
-«Текущий рабочий каталог» - это свойство, уникальное для каждого процесса.
-
-Итак, если cd была программой, она работала бы следующим образом:
-cd /tmp
-запускается процесс cd
-процесс cd изменяет каталог для процесса cd на /tmp
-завершается процесс cd
-При этом для shell текущий рабочий каталог не изменится.
-
-2. Какая альтернатива без pipe команде grep <some_string> <some_file> | wc -l? man grep поможет в ответе на этот вопрос. Ознакомьтесь с документом о других подобных некорректных вариантах использования pipe.
+1. Какой системный вызов делает команда cd? В прошлом ДЗ мы выяснили, что cd не является самостоятельной программой, это shell builtin, поэтому запустить strace непосредственно на cd не получится. Тем не менее, вы можете запустить strace на /bin/bash -c 'cd /tmp'. В этом случае вы увидите полный список системных вызовов, которые делает сам bash при старте. Вам нужно найти тот единственный, который относится именно к cd. Обратите внимание, что strace выдаёт результат своей работы в поток stderr, а не в stdout.
 
 Ответ:
-Альтернатива без pipe:
-    grep -c <some_string> <some_file>
+vagrant@vagrant:~$ strace /bin/bash -c 'cd /tmp' 2>&1 | grep tmp
+execve("/bin/bash", ["/bin/bash", "-c", "cd /tmp"], 0x7ffcfa748180 /* 23 vars */) = 0
+stat("/tmp", {st_mode=S_IFDIR|S_ISVTX|0777, st_size=4096, ...}) = 0
+chdir("/tmp")                           = 0
 
+Команда cd делает системный вызов chdir ()
 
-3. Какой процесс с PID 1 является родителем для всех процессов в вашей виртуальной машине Ubuntu 20.04?
-Ответ:
-    vagrant@vagrant:~$ pstree -p
-    systemd(1)─┬─VBoxService(1020)─┬─{VBoxService}(1026)
-          
-
-
-4. Как будет выглядеть команда, которая перенаправит вывод stderr ls на другую сессию терминала?
-
-Ответ:
-Терминал pts/0:
-    vagrant@vagrant:~/test$ tty
-    /dev/pts/0
-    vagrant@vagrant:~/test$ ls ~/test1 2> /dev/pts/1
-
-Терминал pts/1:
-    vagrant@vagrant:~$ tty
-    /dev/pts/1
-    vagrant@vagrant:~$ ls: cannot access '/home/vagrant/test1': No such file or directory
-
-
-
-5. Получится ли одновременно передать команде файл на stdin и вывести ее stdout в другой файл? Приведите работающий пример.
+2. Попробуйте использовать команду file на объекты разных типов на файловой системе. Например:
+vagrant@netology1:~$ file /dev/tty
+/dev/tty: character special (5/0)
+vagrant@netology1:~$ file /dev/sda
+/dev/sda: block special (8/0)
+vagrant@netology1:~$ file /bin/bash
+/bin/bash: ELF 64-bit LSB shared object, x86-64
+Используя strace выясните, где находится база данных file на основании которой она делает свои догадки.
 
 Ответ:
-    vagrant@vagrant:~/test$ ls
-    grep.txt
-    vagrant@vagrant:~/test$ echo ~/test > lsin.txt
-    vagrant@vagrant:~/test$ ls -A <lsin.txt > lsout.txt
-    vagrant@vagrant:~/test$ cat lsout.txt
-    grep.txt
-    lsin.txt
-    lsout.txt
-    vagrant@vagrant:~/test$
+Согласно документации file использует базу данных с именем magic.mgc. Таким образом выполним:
 
+vagrant@vagrant:~$ strace file /dev/tty 2>&1 | grep magic.mgc
+stat("/home/vagrant/.magic.mgc", 0x7fffdbafdd10) = -1 ENOENT (No such file or directory)
+openat(AT_FDCWD, "/etc/magic.mgc", O_RDONLY) = -1 ENOENT (No such file or directory)
+openat(AT_FDCWD, "/usr/share/misc/magic.mgc", O_RDONLY) = 3
 
+База данных file находится в /usr/share/misc/magic.mgc.
 
-6. Получится ли находясь в графическом режиме, вывести данные из PTY в какой-либо из эмуляторов TTY? Сможете ли вы наблюдать выводимые данные?
+3. Предположим, приложение пишет лог в текстовый файл. Этот файл оказался удален (deleted в lsof), однако возможности сигналом сказать приложению переоткрыть файлы или просто перезапустить приложение – нет. Так как приложение продолжает писать в удаленный файл, место на диске постепенно заканчивается. Основываясь на знаниях о перенаправлении потоков предложите способ обнуления открытого удаленного файла (чтобы освободить место на файловой системе).
 
 Ответ:
-Да получится. Проверено через ssh, так как в графическом режиме терминал запускается также в качестве псевдоэмулятора терминала pts.
-Терминал pts/0 (ssh):
-    vagrant@vagrant:~/test$ tty
-    /dev/pts/0
-    vagrant@vagrant:~/test$ echo hello from pts/0 > /dev/tty2
+Убедимся что текущее свободное место корня файловой системы не меняется во времени:
+vagrant@vagrant:~/test$ df -T | grep ubuntu
+/dev/mapper/ubuntu--vg-ubuntu--lv ext4      32380720  3855188  26857644  13% /
+vagrant@vagrant:~/test$ df -T | grep ubuntu
+/dev/mapper/ubuntu--vg-ubuntu--lv ext4      32380720  3855188  26857644  13% /
 
-Терминал tty2:
-    vagrant@vagrant:~$ tty
-    /dev/tty2
-    hello from pts/0
-    
+Запустим в фон программу dd,записывающую в в файл log поток псевдослучайных данных:
+vagrant@vagrant:~/test$ dd if=/dev/urandom of=./log bs=10 &
+[1] 372023
 
+Уьедимся что log создан и размер его увеличивается:
+vagrant@vagrant:~/test$ ll
+total 13340
+drwxrwxr-x 3 vagrant vagrant 2895872 Feb 10 15:57 ./
+drwxr-xr-x 5 vagrant vagrant 2129920 Feb 10 15:53 ../
+-rw-rw-r-- 1 vagrant vagrant 8622370 Feb 10 15:57 log
+drwxrwxr-x 2 vagrant vagrant    4096 Feb 10 15:55 old/
+vagrant@vagrant:~/test$ ll
+total 20764
+drwxrwxr-x 3 vagrant vagrant  2895872 Feb 10 15:57 ./
+drwxr-xr-x 5 vagrant vagrant  2129920 Feb 10 15:53 ../
+-rw-rw-r-- 1 vagrant vagrant 16227160 Feb 10 15:57 log
+drwxrwxr-x 2 vagrant vagrant     4096 Feb 10 15:55 old/
 
-7. Выполните команду bash 5>&1. К чему она приведет? Что будет, если вы выполните echo netology > /proc/$$/fd/5? Почему так происходит?
+Убедимся что текущее свободное место корня файловой системы стало уменьшаться:
+vagrant@vagrant:~/test$ df -T | grep ubuntu
+/dev/mapper/ubuntu--vg-ubuntu--lv ext4      32380720  3880044  26832788  13% /
 
-Ответ:
-vagrant@vagrant:~/test$ bash 5>&1 # Создает дескриптор fd5 и перенаправляет его в stdout (fd1).
-vagrant@vagrant:~/test$ echo netology > /proc/$$/fd/5 # Перенаправляет stdout (fd1) echo в fd5, который направлен в fd1 (stdout).
-netology
+Удалим файл log:
+vagrant@vagrant:~/test$ rm log
+vagrant@vagrant:~/test$ ll
+total 4916
+drwxrwxr-x 3 vagrant vagrant 2895872 Feb 10 15:57 ./
+drwxr-xr-x 5 vagrant vagrant 2129920 Feb 10 15:53 ../
+drwxrwxr-x 2 vagrant vagrant    4096 Feb 10 15:55 old/
 
+Убедимся что текущее свободное место корня файловой системы продолжает уменьшаться:
+vagrant@vagrant:~/test$ df -T | grep ubuntu
+/dev/mapper/ubuntu--vg-ubuntu--lv ext4      32380720  3902880  26809952  13% /
+vagrant@vagrant:~/test$ df -T | grep ubuntu
+/dev/mapper/ubuntu--vg-ubuntu--lv ext4      32380720  3913572  26799260  13% /
+vagrant@vagrant:~/test$ df -T | grep ubuntu
+/dev/mapper/ubuntu--vg-ubuntu--lv ext4      32380720  3919156  26793676  13% /
 
+Определим файловый дескриптор нашего процесса:
+vagrant@vagrant:~/test$ lsof -p 372023
+COMMAND    PID    USER   FD   TYPE DEVICE SIZE/OFF    NODE NAME
+dd      372023 vagrant  cwd    DIR  253,0  2895872 1048606 /home/vagrant/test
+dd      372023 vagrant  rtd    DIR  253,0     4096       2 /
+dd      372023 vagrant  txt    REG  253,0    80256 1835599 /usr/bin/dd
+dd      372023 vagrant  mem    REG  253,0  3035952 1835290 /usr/lib/locale/locale-archive
+dd      372023 vagrant  mem    REG  253,0  2029224 1841468 /usr/lib/x86_64-linux-gnu/libc-2.31.so
+dd      372023 vagrant  mem    REG  253,0   191472 1841428 /usr/lib/x86_64-linux-gnu/ld-2.31.so
+dd      372023 vagrant    0r   CHR    1,9      0t0      11 /dev/urandom
+dd      372023 vagrant    1w   REG  253,0 83553500 1048609 /home/vagrant/test/log (deleted)
+dd      372023 vagrant    2u   CHR  136,0      0t0       3 /dev/pts/0
+dd      372023 vagrant    3r  FIFO   0,13      0t0   34117 pipe
 
-8. Получится ли в качестве входного потока для pipe использовать только stderr команды, не потеряв при этом отображение stdout на pty? Напоминаем: по умолчанию через pipe передается только stdout команды слева от | на stdin команды справа. Это можно сделать, поменяв стандартные потоки местами через промежуточный новый дескриптор, который вы научились создавать в предыдущем вопросе.
+Уменьшим размер псевдофайла стандартного вывода (stdout) процесса с помощью программы truncate: 
+vagrant@vagrant:~/test$ truncate -s 0 /proc/372023/fd/1
 
-Ответ:
-    vagrant@vagrant:~/test$ ls -lAh ~/test
-    total 12K
-    -rw-rw-r-- 1 vagrant vagrant 28 Feb  7 11:56 grep.txt
-    -rw-rw-r-- 1 vagrant vagrant 19 Feb  7 16:49 lsin.txt
-    -rw-rw-r-- 1 vagrant vagrant 28 Feb  7 16:50 lsout.txt
-    -rw-rw-r-- 1 vagrant vagrant  0 Feb  7 17:50 test1.txt
-    -rw-rw-r-- 1 vagrant vagrant  0 Feb  7 17:50 test2.txt
-    -rw-rw-r-- 1 vagrant vagrant  0 Feb  7 17:50 test3.txt
-    vagrant@vagrant:~/test$ ls -lAh ~/test1
-    ls: cannot access '/home/vagrant/test1': No such file or directory
-    vagrant@vagrant:~/test$ ls -lAh ~/test 5>&2 2>&1 1>&5 | grep  -c test
-    total 12K
-    -rw-rw-r-- 1 vagrant vagrant 28 Feb  7 11:56 grep.txt
-    -rw-rw-r-- 1 vagrant vagrant 19 Feb  7 16:49 lsin.txt
-    -rw-rw-r-- 1 vagrant vagrant 28 Feb  7 16:50 lsout.txt
-    -rw-rw-r-- 1 vagrant vagrant  0 Feb  7 17:50 test1.txt
-    -rw-rw-r-- 1 vagrant vagrant  0 Feb  7 17:50 test2.txt
-    -rw-rw-r-- 1 vagrant vagrant  0 Feb  7 17:50 test3.txt
-    0
-    vagrant@vagrant:~/test$ ls -lAh ~/test1 5>&2 2>&1 1>&5 | grep  -c test
-    1
+Убедимся что текущее свободное место корня файловой системы увеличилось:
+vagrant@vagrant:~/test$ df -T | grep ubuntu
+/dev/mapper/ubuntu--vg-ubuntu--lv ext4      32380720  3857580  26855252  13% /
 
+Убедимся что текущее свободное место корня файловой системы продолжает уменьшаться, так как данные продожают поступать на stdout:
+vagrant@vagrant:~/test$ df -T | grep ubuntu
+/dev/mapper/ubuntu--vg-ubuntu--lv ext4      32380720  3866296  26846536  13% /
 
-9. Что выведет команда cat /proc/$$/environ? Как еще можно получить аналогичный по содержанию вывод?
+Также можно уменьшить размер псевдофайла стандартного вывода (stdout) процесса с помощью перенаправления в него пустоты: 
+vagrant@vagrant:~/test$ > /proc/372023/fd/1
 
-Ответ:
-Команда выведет переменные окружения текущего процесса оболочки bash. Этот файл содержит начальную среду, которая была установлена при запуске текущей программы.
-vagrant@vagrant:~/test$ cat /proc/$$/environ | tr '\000' '\n' # Выведет переменные окружения текущего процесса bash построчно.
-vagrant@vagrant:~/test$ env # Аналогично выводит переменные окружения текущего процесса bash построчно.
+Убедимся что текущее свободное место корня файловой системы увеличилось:
+vagrant@vagrant:~/test$ df -T | grep ubuntu
+/dev/mapper/ubuntu--vg-ubuntu--lv ext4      32380720  3857620  26855212  13% /
 
-
-
-10. Используя man, опишите что доступно по адресам /proc/<PID>/cmdline, /proc/<PID>/exe.
-
-Ответ:
-/proc/<PID>/cmdline - Этот файл, доступный только для чтения, содержит полную командную строку для процесса,
-если только процесс не является зомби.
-proc/<PID>/exe - В Linux 2.2 и более поздних версиях этот файл представляет собой символическую ссылку,
-содержащую фактический путь к выполняемой команде.
-    vagrant@vagrant:~$ readlink /proc/$$/exe
-    /usr/bin/bash
-
-
-
-11. Узнайте, какую наиболее старшую версию набора инструкций SSE поддерживает ваш процессор с помощью /proc/cpuinfo.
-
-Ответ:
-sse4_2
-    vagrant@vagrant:~/test$ grep sse /proc/cpuinfo
-
-
-
-12. При открытии нового окна терминала и vagrant ssh создается новая сессия и выделяется pty. Это можно подтвердить командой tty, которая упоминалась в лекции 3.2. Однако:
-
-vagrant@netology1:~$ ssh localhost 'tty'
-not a tty
-Почитайте, почему так происходит, и как изменить поведение.
+4. Занимают ли зомби-процессы какие-то ресурсы в ОС (CPU, RAM, IO)?
 
 Ответ:
-Так как команды в данном случае выполняется не в интерактивном режиме, то псевдотерминал не выдается.
-    vagrant@vagrant:~$ ssh localhost 'tty'
-    vagrant@localhost's password:
-    not a tty
-Можно принудительно выделять псевдотерминал, указав ключ "-t"
-    vagrant@vagrant:~$ ssh -t localhost 'tty'
-    vagrant@localhost's password:
-    /dev/pts/3
-    Connection to localhost closed.
-    
+Процесс при завершении (как нормальном, так и в результате не обрабатываемого сигнала) освобождает все свои ресурсы и становится «зомби» — пустой записью в таблице процессов, хранящей статус завершения, предназначенный для чтения родительским процессом.
 
+Зомби-процесс существует до тех пор, пока родительский процесс не прочитает его статус с помощью системного вызова wait(), в результате чего запись в таблице процессов будет освобождена.
+Зомби-процессы не занимают памяти, но блокируют записи в таблице процессов, размер которой ограничен для каждого пользователя и системы в целом.
 
-13. Бывает, что есть необходимость переместить запущенный процесс из одной сессии в другую. Попробуйте сделать это, воспользовавшись reptyr. Например, так можно перенести в screen процесс, который вы запустили по ошибке в обычной SSH-сессии.
+При достижении лимита записей все процессы пользователя, от имени которого выполняется создающий зомби родительский процесс, не будут способны создавать новые дочерние процессы.
+
+5. В iovisor BCC есть утилита opensnoop:
+root@vagrant:~# dpkg -L bpfcc-tools | grep sbin/opensnoop
+/usr/sbin/opensnoop-bpfcc
+На какие файлы вы увидели вызовы группы open за первую секунду работы утилиты? Воспользуйтесь пакетом bpfcc-tools для Ubuntu 20.04. Дополнительные сведения по установке.
 
 Ответ:
-Для начала установим reptyr:
+vagrant@vagrant:~/test$ sudo /usr/sbin/opensnoop-bpfcc
+PID    COMM               FD ERR PATH
+632    snapd              10   0 /var/lib/snapd/assertions/asserts-v0/model/16/generic/generic-classic
+632    snapd              11   0 /var/lib/snapd/assertions/asserts-v0/model/16/generic/generic-classic/active
+632    snapd              10   0 /var/lib/snapd/assertions/asserts-v0/serial/generic/generic-classic/e58abe3f-98f3-41b7-9d4c-90b167b6f4e6
+632    snapd              11   0 /var/lib/snapd/assertions/asserts-v0/serial/generic/generic-classic/e58abe3f-98f3-41b7-9d4c-90b167b6f4e6/active
+632    snapd              10   0 /var/lib/snapd/assertions/asserts-v0/model/16/generic/generic-classic
+632    snapd              11   0 /var/lib/snapd/assertions/asserts-v0/model/16/generic/generic-classic/active
+632    snapd              10   0 /var/lib/snapd/assertions/asserts-v0/serial/generic/generic-classic/e58abe3f-98f3-41b7-9d4c-90b167b6f4e6
+632    snapd              11   0 /var/lib/snapd/assertions/asserts-v0/serial/generic/generic-classic/e58abe3f-98f3-41b7-9d4c-90b167b6f4e6/active
+632    snapd              10   0 /var/lib/snapd/assertions/asserts-v0/model/16/generic/generic-classic
+632    snapd              11   0 /var/lib/snapd/assertions/asserts-v0/model/16/generic/generic-classic/active
+1      systemd            12   0 /proc/632/cgroup
+1060   vminfo              4   0 /var/run/utmp
+621    dbus-daemon        -1   2 /usr/local/share/dbus-1/system-services
+621    dbus-daemon        19   0 /usr/share/dbus-1/system-services
+621    dbus-daemon        -1   2 /lib/dbus-1/system-services
+621    dbus-daemon        19   0 /var/lib/snapd/dbus-1/system-services/
 
-    vagrant@vagrant:~$ sudo apt-get install reptyr
+6. Какой системный вызов использует uname -a? Приведите цитату из man по этому системному вызову, где описывается альтернативное местоположение в /proc, где можно узнать версию ядра и релиз ОС.
 
-Затем при попытке переместить процесс в другой pty возникает ошибка:
-    vagrant@vagrant:~$ reptyr 1501
-    Unable to attach to pid 1501: Operation not permitted
-    The kernel denied permission while attaching. If your uid matches
-    the target's, check the value of /proc/sys/kernel/yama/ptrace_scope.
-    For more information, see /etc/sysctl.d/10-ptrace.conf
+Ответ:
+vagrant@vagrant:~/test$ strace uname -a 2>&1 | grep "Linux"
+uname({sysname="Linux", nodename="vagrant", ...}) = 0
+uname({sysname="Linux", nodename="vagrant", ...}) = 0
+uname({sysname="Linux", nodename="vagrant", ...}) = 0
+write(1, "Linux vagrant 5.4.0-91-generic #"..., 106Linux vagrant 5.4.0-91-generic #102-Ubuntu SMP Fri Nov 5 16:31:28 UTC 2021 x86_64 x86_64 x86_64 GNU/Linux
 
-Из руководства на reptyr:
-> reptyr depends on the ptrace(2) system call to attach to the  remote  program.  On  Ubuntu
->    Maverick  and  higher,  this  ability is disabled by default for security reasons. You can
->    enable it temporarily by doing
-> 
->                # echo 0 /proc/sys/kernel/yama/ptrace_scope
-> 
->    as root, or permanently by  editing  the  file  /etc/sysctl.d/10-ptrace.conf,  which  also
->    contains more information about this setting.
+Системный вызов uname()
+Цитата из man:
+"Part of the utsname information is also accessible via
+       /proc/sys/kernel/{ostype, hostname, osrelease, version,
+       domainname}."
 
-Выполним:
-    vagrant@vagrant:~$ echo 0|sudo tee /proc/sys/kernel/yama/ptrace_scope
+7. Чем отличается последовательность команд через ; и через && в bash? Например:
+root@netology1:~# test -d /tmp/some_dir; echo Hi
+Hi
+root@netology1:~# test -d /tmp/some_dir && echo Hi
+root@netology1:~#
 
-Терминал /dev/pts/0 (ssh):
-    vagrant@vagrant:~$ tty
-    /dev/pts/0
-    vagrant@vagrant:~$ ssh localhost 'tty' &
-    [1] 1433
-    ssh localhost 'tty'
-    
-    [1]+  Stopped ssh localhost 'tty'
-    vagrant@vagrant:~$ ps -aux | grep 1433
-    vagrant 1433  0.2  0.6  12008  6368 pts/0T16:52   0:00 ssh localhost tty
-    vagrant 1437  0.0  0.0   6300   740 pts/0S+   16:52   0:00 grep --color=auto 1433
+Ответ:
+";" - Разделитель последовательных команд. Выполняет команды одну за другой независимо от статуса завершения предыдущей команды.
+"&&" - Условный оператор. Выполнит последующую команду если первая завершилась успешно.
+vagrant@vagrant:~$ ls
+test
+vagrant@vagrant:~$ test -d ./test; echo Hi
+Hi
+vagrant@vagrant:~$ test -d ./test && echo Hi
+Hi
+vagrant@vagrant:~$ test -d ./test1 && echo Hi
+vagrant@vagrant:~$
 
-Терминал /dev/pts/1 (ssh):
-    vagrant@vagrant:~$ ps -aux | grep 1433
-    vagrant 1433  0.0  0.6  12008  6368 pts/0T16:52   0:00 ssh localhost tty
-    vagrant 1467  0.0  0.0   6300   664 pts/1S+   16:55   0:00 grep --color=auto 1433
-    vagrant@vagrant:~$ man ps
-    vagrant@vagrant:~$ reptyr 1433
-    vagrant@localhost's password:
+Есть ли смысл использовать в bash &&, если применить set -e?
+Ответ:
+   "set -e" -  Exit immediately if a command exits with a non-zero status.
+Совместное использование "&&" и "set -e" вероятно не имеет смысла.
 
-Терминал /dev/pts/0 (ssh):
-    vagrant@vagrant:~$ ps -aux | grep 1433
-    vagrant 1433  0.0  0.6  12008  6836 pts/2Ss+  16:52   0:00 ssh localhost tty
-    vagrant 1498  2.2  0.2   2592  2036 pts/1S+   16:59   0:00 reptyr 1433
-    vagrant 1501  0.0  0.0   6300   728 pts/0S+   16:59   0:00 grep --color=auto 1433
+8. Из каких опций состоит режим bash set -euxo pipefail и почему его хорошо было бы использовать в сценариях?
 
-14. sudo echo string > /root/new_file не даст выполнить перенаправление под обычным пользователем, так как перенаправлением занимается процесс shell'а, который запущен без sudo под вашим пользователем. Для решения данной проблемы можно использовать конструкцию echo string | sudo tee /root/new_file. Узнайте что делает команда tee и почему в отличие от sudo echo команда с sudo tee будет работать.
-Команда tee делает вывод одновременно и в файл, указанный в качестве параметра, и в stdout. 
-Так как команда запущена от sudo, то имеет права на запись в файл, получая на вход стандартный вывод команды echo.
+Ответ:
+ Набор данных параметров позволит улучшить отладку и повысить безопасность при выполнении скрипта и результата его выполнения.
+
+"-e" -  Указав параметр -e скрипт немедленно завершит работу, если любая команда выйдет с ошибкой. По-умолчанию, игнорируются любые неудачи и сценарий продолжет выполнятся.
+"-u" - Благодаря ему оболочка проверяет инициализацию переменных в скрипте. Если переменной не будет, скрипт немедленно завершиться. Данный параметр достаточно умен, чтобы нормально работать с переменной по-умолчанию ${MY_VAR:-$DEFAULT} и условными операторами (if, while, и др).
+"-x" - Полезен при отладке. С помощью него bash печатает в стандартный вывод все команды перед их исполнением. Стоит учитывать, что все переменные будут уже доставлены, и с этим нужно быть аккуратнее, к примеру если используете пароли.
+"-o pipefail" - Если нужно убедиться, что все команды в пайпах завершились успешно, нужно использовать -o pipefail.
+
+
+9. Используя -o stat для ps, определите, какой наиболее часто встречающийся статус у процессов в системе. В man ps ознакомьтесь (/PROCESS STATE CODES) что значат дополнительные к основной заглавной буквы статуса процессов. Его можно не учитывать при расчете (считать S, Ss или Ssl равнозначными).
+
+Ответ:
+vagrant@vagrant:~$ ps -ax -o stat | grep -c D
+0
+vagrant@vagrant:~$ ps -ax -o stat | grep -c I
+46
+vagrant@vagrant:~$ ps -ax -o stat | grep -c R
+2
+vagrant@vagrant:~$ ps -ax -o stat | grep -c S
+65
+vagrant@vagrant:~$ ps -ax -o stat | grep -c T
+1
+vagrant@vagrant:~$ ps -ax -o stat | grep -c W
+0
+vagrant@vagrant:~$ ps -ax -o stat | grep -c X
+0
+vagrant@vagrant:~$ ps -ax -o stat | grep -c Z
+0
+
+Самый часто встречающийся статус у процессов "S" - interruptible sleep (waiting for an event to complete). 
+
+Дополнительные характеристики состояния процессов означают:
+
+  		<    high-priority (not nice to other users)
+               N    low-priority (nice to other users)
+               L    has pages locked into memory (for real-time and custom IO)
+               s    is a session leader
+               l    is multi-threaded (using CLONE_THREAD, like NPTL pthreads do)
+               +    is in the foreground process group
+
