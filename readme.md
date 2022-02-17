@@ -85,6 +85,7 @@ node_network_transmit_errs_total{device="lo"} 0
 Ответ:
 
 ![](../../Education/Netology/DEVOPS/Netdata.png)
+Все работает.
 
 4. Можно ли по выводу `dmesg` понять, осознает ли ОС, что загружена не на настоящем оборудовании, а на системе виртуализации?
 
