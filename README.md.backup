@@ -128,7 +128,7 @@ root@vagrant:~# unshare -f --pid --mount-proc sleep 10m
 ^Z
 [1]+  Stopped                 unshare -f --pid --mount-proc sleep 10m
 
-root@vagrant:~~# ps -aux | grep sleep
+root@vagrant:~# ps -aux | grep sleep
 root        1846  0.0  0.0   5480   580 pts/1    T    15:15   0:00 unshare -f --pid --mount-proc sleep 10m
 root        1847  0.0  0.0   5476   592 pts/1    S    15:15   0:00 sleep 10m
 root        1855  0.0  0.0   6432   660 pts/1    S+   15:15   0:00 grep --color=auto sleep
