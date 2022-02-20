@@ -12,14 +12,22 @@
 Создадим Unit-file /etc/systemd/system/node_exporter.service:
 
 [Unit]
+
 Description=Node Exporter
 
 [Service]
-ExecStart=/usr/local/bin/node_exporter
+
+ExecStart=/usr/local/bin/node_exporter $EXTRA_OPTS
+
 EnvironmentFile=/etc/default/node_exporter
+
 Restart=on-failure
+
 [Install]
+
 WantedBy=multi-user.target
+
+Systemd будет подгружать переменные окружения при старте node_exporter из файла /etc/default/node_exporter, а параметры запуска искать в переменной EXTRA_OPTS.
 
 Поместим в автозагрузку:
 vagrant@vagrant:~$ systemctl enable node_exporter.service
@@ -111,7 +119,7 @@ vagrant@vagrant:~$ dmesg
 Это обозначает максимальное количество дескрипторов файлов, которые может выделить процесс. Значение по умолчанию равно 1024*1024 (1048576), чего должно быть достаточно для большинства машин. Фактический лимит зависит от лимита ресурсов RLIMIT_NOFILE.
 Утилита ulimit возвращает два вида ограничений - hard и soft. Ограничение soft вы можете менять в любую сторону, пока оно не превышает hard. Ограничение hard можно менять только в меньшую сторону от имени обычного пользователя. От имени суперпользователя можно менять оба вида ограничений так, как нужно. По умолчанию отображаются soft-ограничения:
 
-vagrant@vagrant:~~$ ulimit -n
+vagrant@vagrant:~$ ulimit -n
 1024
 Чтобы вывести hard, используйте опцию -H:
 ulimit -nH
@@ -124,21 +132,38 @@ vagrant@vagrant:~$ ulimit -Hn
 6. Запустите любой долгоживущий процесс (не `ls`, который отработает мгновенно, а, например, `sleep 1h`) в отдельном неймспейсе процессов; покажите, что ваш процесс работает под PID 1 через `nsenter`. Для простоты работайте в данном задании под root (`sudo -i`). Под обычным пользователем требуются дополнительные опции (`--map-root-user`) и т.д.
 
 Ответ:
-vagrant@vagrant:~$ sudo -i
-root@vagrant:~# unshare -f --pid --mount-proc sleep 10m
+
+vagrant@vagrant:$ sudo -i
+
+root@vagrant:# unshare -f --pid --mount-proc sleep 10
+
 ^Z
+
 [1]+  Stopped                 unshare -f --pid --mount-proc sleep 10m
 
-root@vagrant:~~# ps -aux | grep sleep
+
+root@vagrant:# ps -aux | grep sleep
+
 root        1846  0.0  0.0   5480   580 pts/1    T    15:15   0:00 unshare -f --pid --mount-proc sleep 10m
+
 root        1847  0.0  0.0   5476   592 pts/1    S    15:15   0:00 sleep 10m
+
 root        1855  0.0  0.0   6432   660 pts/1    S+   15:15   0:00 grep --color=auto sleep
-root@vagrant:~# nsenter -t 1847 -p -m
+
+
+root@vagrant:# nsenter -t 1847 -p -m
+
 root@vagrant:/# ps -aux
+
 USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+
 root           1  0.0  0.0   5476   592 pts/1    S    15:15   0:00 sleep 10m
+
 root           2  0.1  0.3   7236  3988 pts/1    S    15:17   0:00 -bash
+
 root          13  0.0  0.3   9084  3644 pts/1    R+   15:17   0:00 ps -aux
+
+
 
 7. Найдите информацию о том, что такое `:(){ :|:& };:`. Запустите эту команду в своей виртуальной машине Vagrant с Ubuntu 20.04 (**это важно, поведение в других ОС не проверялось**). Некоторое время все будет "плохо", после чего (минуты) – ОС должна стабилизироваться. Вызов `dmesg` расскажет, какой механизм помог автоматической стабилизации. Как настроен этот механизм по-умолчанию, и как изменить число процессов, которое можно создать в сессии?
 
@@ -157,19 +182,31 @@ dmesg сообщает:
  
 [ 4059.244572] cgroup: fork rejected by pids controller in /user.slice/user-1000.slice/session-5.scope
 
-vagrant@vagrant:~$ systemctl status user-1000.slice
-● user-1000.slice - User Slice of UID 1000
-     Loaded: loaded
-    Drop-In: /usr/lib/systemd/system/user-.slice.d
-             └─10-defaults.conf
-     Active: active since Thu 2022-02-17 14:20:15 UTC; 1h 58min ago
-       Docs: man:user@.service(5)
-      Tasks: 13 (limit: 2356)
+vagrant@vagrant:$ systemctl status user-1000.slice
 
-vagrant@vagrant:~$ systemctl show --property DefaultTasksMax
+● user-1000.slice - User Slice of UID 1000
+
+     Loaded: loaded
+     
+    Drop-In: /usr/lib/systemd/system/user-.slice.d
+    
+             └─10-defaults.conf
+             
+     Active: active since Thu 2022-02-17 14:20:15 UTC; 1h 58min ago
+     
+       Docs: man:user@.service(5)
+       
+      Tasks: 13 (limit: 2356)
+      
+
+vagrant@vagrant:$ systemctl show --property DefaultTasksMax
+
 DefaultTasksMax=1071
-vagrant@vagrant:~$ cat /sys/fs/cgroup/pids/user.slice/user-1000.slice/pids.max
+
+vagrant@vagrant:$ cat /sys/fs/cgroup/pids/user.slice/user-1000.slice/pids.max
+
 2356
+
 cgroups – это механизм ядра, позволяющий ограничивать использование, вести учет и изолировать потребление системных ресурсов (ЦП, память, дисковый ввод/вывод, сеть и т. п.) на уровне коллекций процессов
 Три cgroups, которые по умолчанию есть в системе – System, User и Machine. Каждая из этих групп называется «слайс» (slice – сектор). Каждый слайс может иметь дочерние секторы-слайсы. Каждый из трех слайсов верхнего уровня предназначен для своего типа рабочих нагрузок, которым нарезаются дочерние сектора в рамках родительского слайса:
 
@@ -182,9 +219,15 @@ Machine – виртуальные машины, типа KVM-гостей.
 Поскольку тривиально достичь предела задачи, не нарушая никаких установленных ограничений kmemcg, PIDS являются фундаментальным ресурсом. Таким образом, исчерпание PID должно быть предотвращено в рамках иерархии cgroup, позволяя ограничивать количество задач в cgroup ресурсами.
 
 Изменить количество процессов можно так:
-vagrant@vagrant:~$ cat /sys/fs/cgroup/pids/user.slice/user-1000.slice/pids.max
+
+vagrant@vagrant:$ cat /sys/fs/cgroup/pids/user.slice/user-1000.slice/pids.max
+
 2356
+
 vagrant@vagrant:/$ echo 2355 | sudo tee /sys/fs/cgroup/pids/user.slice/user-1000.slice/pids.max
+
 2355
+
 vagrant@vagrant:/$ cat /sys/fs/cgroup/pids/user.slice/user-1000.slice/pids.max
+
 2355
