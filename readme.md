@@ -328,6 +328,7 @@ vagrant@vagrant:~$ sudo lvs
   lvol0     vg1       -wi-a----- 100.00m
 
 
+<<<<<<< HEAD
 10. Создайте mkfs.ext4 ФС на получившемся LV.
 Выполнено:
 vagrant@vagrant:~$ sudo mkfs.ext4 /dev/vg1/lvol0
