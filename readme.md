@@ -622,12 +622,19 @@ sdc 	                        8:32   0  2.5G  0 disk
 
 14. Протестируйте целостность файла:
 
+
 root@vagrant:# gzip -t /tmp/new/test.gz
+
 root@vagrant:# echo $?
+
 0
+
 Выполнено:
+
 vagrant@vagrant:$ gzip -t /tmp/new/test.gz. && echo $?
+
 0
+
 
 15. Используя pvmove, переместите содержимое PV с RAID0 на RAID1.
 
