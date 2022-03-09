@@ -579,25 +579,45 @@ loop5                       7:5    0 61.9M  1 loop  /snap/core20/1361
 
 loop6                       7:6    0 67.9M  1 loop  /snap/lxd/22526
 
-sda                         8:0    0   64G  0 disk
-├─sda1                      8:1    0    1M  0 part
-├─sda2                      8:2    0    1G  0 part  /boot
-└─sda3                      8:3    0   63G  0 part
-  └─ubuntu--vg-ubuntu--lv 253:0    0 31.5G  0 lvm   /
+sda    	                     8:0    0   64G  0 disk
+
+├─sda1       	               8:1    0    1M  0 part
+
+├─sda2      	                8:2    0    1G  0 part  /boot
+
+└─sda3      	                8:3    0   63G  0 part
+
+  └─ubuntu--vg-ubuntu--lv 253:0 	   0 31.5G  0 lvm   /
+	
   
-sdb                         8:16   0  2.5G  0 disk
-├─sdb1                      8:17   0    2G  0 part
-│ └─md0                     9:0    0    2G  0 raid1
-└─sdb2                      8:18   0  511M  0 part
-  └─md1                     9:1    0 1018M  0 raid0
-    └─vg1-lvol0           253:1    0  100M  0 lvm   /tmp/new
+	
+  
+sdb	                         8:16   0  2.5G  0 disk
+
+├─sdb1 	                     8:17   0    2G  0 part
+
+│ └─md0	                     9:0    0    2G  0 raid1
+
+└─sdb2 	                     8:18   0  511M  0 part
+
+  └─md1 	                    9:1    0 1018M  0 raid0
+	
+    └─vg1-lvol0 	          253:1    0  100M  0 lvm   /tmp/new
+		
+		
     
-sdc                         8:32   0  2.5G  0 disk
-├─sdc1                      8:33   0    2G  0 part
-│ └─md0                     9:0    0    2G  0 raid1
-└─sdc2                      8:34   0  511M  0 part
-  └─md1                     9:1    0 1018M  0 raid0
-    └─vg1-lvol0           253:1    0  100M  0 lvm   /tmp/new
+sdc 	                        8:32   0  2.5G  0 disk
+
+├─sdc1  	                    8:33   0    2G  0 part
+
+│ └─md0 	                    9:0    0    2G  0 raid1
+
+└─sdc2 	                     8:34   0  511M  0 part
+
+  └─md1 	                    9:1    0 1018M  0 raid0
+	
+    └─vg1-lvol0 	          253:1    0  100M  0 lvm   /tmp/new
+		
     
 
 14. Протестируйте целостность файла:
@@ -638,25 +658,41 @@ loop5                       7:5    0 61.9M  1 loop  /snap/core20/1361
 
 loop6                       7:6    0 67.9M  1 loop  /snap/lxd/22526
 
-sda                         8:0    0   64G  0 disk
-├─sda1                      8:1    0    1M  0 part
-├─sda2                      8:2    0    1G  0 part  /boot
-└─sda3                      8:3    0   63G  0 part
-  └─ubuntu--vg-ubuntu--lv 253:0    0 31.5G  0 lvm   /
-  
-sdb                         8:16   0  2.5G  0 disk
-├─sdb1                      8:17   0    2G  0 part
-│ └─md0                     9:0    0    2G  0 raid1
-│   └─vg1-lvol0           253:1    0  100M  0 lvm   /tmp/new
-└─sdb2                      8:18   0  511M  0 part
-  └─md1                     9:1    0 1018M  0 raid0
+sda      	                   8:0    0   64G  0 disk
 
-sdc                         8:32   0  2.5G  0 disk
-├─sdc1                      8:33   0    2G  0 part
-│ └─md0                     9:0    0    2G  0 raid1
-│   └─vg1-lvol0           253:1    0  100M  0 lvm   /tmp/new
-└─sdc2                      8:34   0  511M  0 part
-  └─md1                     9:1    0 1018M  0 raid0
+├─sda1  	                    8:1    0    1M  0 part
+
+├─sda2   	                   8:2    0    1G  0 part  /boot
+
+└─sda3   	                   8:3    0   63G  0 part
+
+  └─ubuntu--vg-ubuntu--lv 	253:0    0 31.5G  0 lvm   /
+	
+  
+sdb             	            8:16   0  2.5G  0 disk
+
+├─sdb1           	           8:17   0    2G  0 part
+
+│ └─md0  	                   9:0    0    2G  0 raid1
+
+│   └─vg1-lvol0    	       253:1    0  100M  0 lvm   /tmp/new
+
+└─sdb2         	             8:18   0  511M  0 part
+
+  └─md1       	              9:1    0 1018M  0 raid0
+	
+
+sdc    	                     8:32   0  2.5G  0 disk
+
+├─sdc1   	                   8:33   0    2G  0 part
+
+│ └─md0  	                   9:0    0    2G  0 raid1
+
+│   └─vg1-lvol0 	          253:1    0  100M  0 lvm   /tmp/new
+
+└─sdc2  	                    8:34   0  511M  0 part
+
+  └─md1  	                   9:1    0 1018M  0 raid0
   
 
 16. Сделайте --fail на устройство в вашем RAID1 md.
