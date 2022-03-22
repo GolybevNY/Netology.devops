@@ -18,23 +18,7 @@ HOST: stackoverflow.com
 
 Ответ:
 
-HTTP/1.1 301 Moved Permanently
-cache-control: no-cache, no-store, must-revalidate
-location: https://stackoverflow.com/questions
-x-request-guid: 94e99cd0-1d4c-4530-92f5-08949e3aa608
-feature-policy: microphone 'none'; speaker 'none'
-content-security-policy: upgrade-insecure-requests; frame-ancestors 'self' https://stackexchange.com
-Accept-Ranges: bytes
-Date: Tue, 22 Mar 2022 16:05:11 GMT
-Via: 1.1 varnish
-Connection: close
-X-Served-By: cache-fra19177-FRA
-X-Cache: MISS
-X-Cache-Hits: 0
-X-Timer: S1647965112.586235,VS0,VE92
-Vary: Fastly-SSL
-X-DNS-Prefetch-Control: off
-Set-Cookie: prov=8c9c8446-84ba-9558-d0a0-666c510a7181; domain=.stackoverflow.com; expires=Fri, 01-Jan-2055 00:00:00 GMT; path=/; HttpOnly
+![Telnet](https://user-images.githubusercontent.com/95014681/159537848-50e0e7bf-012b-4d5b-9571-ac45e239f476.png)
 
 Код состояния HTTP 301 или Moved Permanently (с англ. — «Перемещено навсегда») — стандартный код ответа HTTP, получаемый в ответ от сервера в ситуации, когда запрошенный ресурс был на постоянной основе перемещён в новое месторасположение, и указывающий на то, что текущие ссылки, использующие данный URL, должны быть обновлены. Адрес нового месторасположения ресурса указывается в поле Location получаемого в ответ заголовка пакета протокола HTTP.
 
@@ -74,15 +58,37 @@ descr:          PJSC "Rostelecom" North-West Region
 
 descr:          14A, Sinopskaya emb., 191167, Saint-Petersburg, Russia
 
+
 Какой автономной системе AS? Воспользуйтесь утилитой whois
+
+Ответ:
+
+AS8997-MNT
+
 Через какие сети проходит пакет, отправленный с вашего компьютера на адрес 8.8.8.8? Через какие AS?
 Воспользуйтесь утилитой traceroute
 
+![Traceroute](https://user-images.githubusercontent.com/95014681/159531941-4145c9ba-3244-413a-a428-82be4cea18e5.png)
+
+![Whois_AS](https://user-images.githubusercontent.com/95014681/159535267-43e973fe-0525-4cbe-9ec9-6560fc5c2abc.png)
+
+
 Повторите задание 5 в утилите mtr. На каком участке наибольшая задержка - delay?
+
+![MTR](https://user-images.githubusercontent.com/95014681/159532987-380718ba-56b8-4dca-a47d-061a90beeb46.png)
+
+Наибольшая задержка на AS16159 на 9 прыжке.
+
 
 Какие DNS сервера отвечают за доменное имя dns.google? Какие A записи? воспользуйтесь утилитой dig
 
+![DIG](https://user-images.githubusercontent.com/95014681/159536158-70fa18bb-61ea-4ed5-8df8-75b6215b68d3.png)
+
+
 Проверьте PTR записи для IP адресов из задания 7. Какое доменное имя привязано к IP? воспользуйтесь утилитой dig
+
+![DIG_in-addr](https://user-images.githubusercontent.com/95014681/159537068-fbd3d7d1-870e-42c6-9f7a-74b6308bb3be.png)
+
 
 В качестве ответов на вопросы можно приложите лог выполнения команд в консоли или скриншот полученных результатов.
 
