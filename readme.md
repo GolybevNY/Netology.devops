@@ -122,6 +122,7 @@ sudo ip -s -s neigh flush all
 sudo arp -d 192.168.0.102
 
 Очистить ARP кеш полностью для Windows:
+
 netsh interface ipv4 delete arpcache - Сброс кэша ARP для одного или всех интерфейсов.
 
 или
@@ -129,6 +130,7 @@ netsh interface ipv4 delete arpcache - Сброс кэша ARP для одног
 netsh interface ipv4 delete neighbors - Сброс кэша ARP для одного или всех интерфейсов.
 
 Удалить только один нужный IP для Windows:
+
 arp -d 192.168.0.102
 
 Задание для самостоятельной отработки (необязательно к выполнению)
