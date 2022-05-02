@@ -1,149 +1,239 @@
-Домашнее задание к занятию "3.7. Компьютерные сети, лекция 2"
-Проверьте список доступных сетевых интерфейсов на вашем компьютере. Какие команды есть для этого в Linux и в Windows?
+Домашнее задание к занятию "3.8. Компьютерные сети, лекция 3"
+Подключитесь к публичному маршрутизатору в интернет. Найдите маршрут к вашему публичному IP
+telnet route-views.routeviews.org
+Username: rviews
+show ip route x.x.x.x/32
+ 
+Ответ:
+
+![route-views_show ip route](https://user-images.githubusercontent.com/95014681/166216404-011690ce-28c7-4e5c-b47c-8b1aefc7e537.png)
+
+
+show bgp x.x.x.x/32
+
+Ответ:
+ 
+ route-views>show bgp 178.71.189.200
+ RouteViews BGP Route Viewer
+                    route-views.routeviews.org
+BGP routing table entry for 178.70.0.0/15, version 2229122867
+Paths: (24 available, best #20, table default)
+  Not advertised to any peer
+  Refresh Epoch 1
+  6939 12389, (aggregated by 12389 212.48.198.56)
+    64.71.137.241 from 64.71.137.241 (216.218.252.164)
+      Origin IGP, localpref 100, valid, external
+      path 7FE13F14E558 RPKI State valid
+      rx pathid: 0, tx pathid: 0
+  Refresh Epoch 1
+  3333 1103 12389, (aggregated by 12389 212.48.198.56)
+    193.0.0.56 from 193.0.0.56 (193.0.0.56)
+      Origin IGP, localpref 100, valid, external
+      path 7FE1823FB488 RPKI State valid
+      rx pathid: 0, tx pathid: 0
+  Refresh Epoch 1
+  8283 1299 12389, (aggregated by 12389 212.48.198.56)
+    94.142.247.3 from 94.142.247.3 (94.142.247.3)
+      Origin IGP, metric 0, localpref 100, valid, external
+      Community: 1299:30000 8283:1 8283:101 8283:102
+      unknown transitive attribute: flag 0xE0 type 0x20 length 0x24
+        value 0000 205B 0000 0000 0000 0001 0000 205B
+              0000 0005 0000 0001 0000 205B 0000 0005
+              0000 0002
+      path 7FE0B35AFF90 RPKI State valid
+      rx pathid: 0, tx pathid: 0
+  Refresh Epoch 1
+  53767 174 12389, (aggregated by 12389 212.48.198.56)
+    162.251.163.2 from 162.251.163.2 (162.251.162.3)
+      Origin IGP, localpref 100, valid, external
+      Community: 174:21101 174:22005 53767:5000
+      path 7FE1653578C8 RPKI State valid
+      rx pathid: 0, tx pathid: 0
+  Refresh Epoch 1
+  3267 1299 12389, (aggregated by 12389 212.48.198.56)
+    194.85.40.15 from 194.85.40.15 (185.141.126.1)
+      Origin IGP, metric 0, localpref 100, valid, external
+      path 7FDFFC3CF2A8 RPKI State valid
+      rx pathid: 0, tx pathid: 0
+	  Refresh Epoch 1
+  3561 3910 3356 12389, (aggregated by 12389 212.48.198.56)
+    206.24.210.80 from 206.24.210.80 (206.24.210.80)
+      Origin IGP, localpref 100, valid, external
+      path 7FE0FC45B868 RPKI State valid
+      rx pathid: 0, tx pathid: 0
+  Refresh Epoch 1
+  7018 3356 12389, (aggregated by 12389 212.48.198.56)
+    12.0.1.63 from 12.0.1.63 (12.0.1.63)
+      Origin IGP, localpref 100, valid, external
+      Community: 7018:5000 7018:37232
+      path 7FE01C4AABB8 RPKI State valid
+      rx pathid: 0, tx pathid: 0
+  Refresh Epoch 1
+  3356 12389, (aggregated by 12389 212.48.198.56)
+    4.68.4.46 from 4.68.4.46 (4.69.184.201)
+      Origin IGP, metric 0, localpref 100, valid, external
+      Community: 3356:2 3356:22 3356:100 3356:123 3356:501 3356:901 3356:2065
+      path 7FE087B37798 RPKI State valid
+      rx pathid: 0, tx pathid: 0
+  Refresh Epoch 1
+  701 1273 12389, (aggregated by 12389 212.48.198.56)
+    137.39.3.55 from 137.39.3.55 (137.39.3.55)
+      Origin IGP, localpref 100, valid, external
+      path 7FE0C4A0C660 RPKI State valid
+      rx pathid: 0, tx pathid: 0
+  Refresh Epoch 1
+  3549 3356 12389, (aggregated by 12389 212.48.198.56)
+    208.51.134.254 from 208.51.134.254 (67.16.168.191)
+      Origin IGP, metric 0, localpref 100, valid, external
+      Community: 3356:2 3356:22 3356:100 3356:123 3356:501 3356:901 3356:2065 3549:2581 3549:30840
+      path 7FE041003BF0 RPKI State valid
+      rx pathid: 0, tx pathid: 0
+  Refresh Epoch 1
+  19214 174 12389, (aggregated by 12389 212.48.198.56)
+    208.74.64.40 from 208.74.64.40 (208.74.64.40)
+      Origin IGP, localpref 100, valid, external
+      Community: 174:21101 174:22005
+      path 7FE17AADCCE8 RPKI State valid
+	       rx pathid: 0, tx pathid: 0
+  Refresh Epoch 1
+  20130 6939 12389, (aggregated by 12389 212.48.198.56)
+    140.192.8.16 from 140.192.8.16 (140.192.8.16)
+      Origin IGP, localpref 100, valid, external
+      path 7FE02708F370 RPKI State valid
+      rx pathid: 0, tx pathid: 0
+  Refresh Epoch 1
+  20912 3257 1273 12389, (aggregated by 12389 212.48.198.56)
+    212.66.96.126 from 212.66.96.126 (212.66.96.126)
+      Origin IGP, localpref 100, valid, external
+      Community: 3257:8070 3257:30352 3257:50001 3257:53900 3257:53902 20912:65004
+      path 7FE0E9096C80 RPKI State valid
+      rx pathid: 0, tx pathid: 0
+  Refresh Epoch 1
+  4901 6079 1299 12389, (aggregated by 12389 212.48.198.56)
+    162.250.137.254 from 162.250.137.254 (162.250.137.254)
+      Origin IGP, localpref 100, valid, external
+      Community: 65000:10100 65000:10300 65000:10400
+      path 7FE152950608 RPKI State valid
+      rx pathid: 0, tx pathid: 0
+  Refresh Epoch 1
+  101 174 12389, (aggregated by 12389 212.48.198.56)
+    209.124.176.223 from 209.124.176.223 (209.124.176.223)
+      Origin IGP, localpref 100, valid, external
+      Community: 101:20100 101:20110 101:22100 174:21101 174:22005
+      Extended Community: RT:101:22100
+      path 7FE0E8C231B0 RPKI State valid
+      rx pathid: 0, tx pathid: 0
+  Refresh Epoch 1
+  1351 6939 12389, (aggregated by 12389 212.48.198.56)
+    132.198.255.253 from 132.198.255.253 (132.198.255.253)
+      Origin IGP, localpref 100, valid, external
+      path 7FE0E5AF1BB0 RPKI State valid
+      rx pathid: 0, tx pathid: 0
+  Refresh Epoch 1
+  57866 3356 12389, (aggregated by 12389 212.48.198.56)
+    37.139.139.17 from 37.139.139.17 (37.139.139.17)
+      Origin IGP, metric 0, localpref 100, valid, external
+	   Community: 3356:2 3356:22 3356:100 3356:123 3356:501 3356:901 3356:2065
+      path 7FE0B1E53248 RPKI State valid
+      rx pathid: 0, tx pathid: 0
+  Refresh Epoch 1
+  852 3356 12389, (aggregated by 12389 212.48.198.56)
+    154.11.12.212 from 154.11.12.212 (96.1.209.43)
+      Origin IGP, metric 0, localpref 100, valid, external
+      path 7FE108B20938 RPKI State valid
+      rx pathid: 0, tx pathid: 0
+  Refresh Epoch 1
+  3303 12389, (aggregated by 12389 212.48.198.56)
+    217.192.89.50 from 217.192.89.50 (138.187.128.158)
+      Origin IGP, localpref 100, valid, external
+      Community: 3303:1004 3303:1006 3303:1030 3303:3056
+      path 7FE0284654B0 RPKI State valid
+      rx pathid: 0, tx pathid: 0
+  Refresh Epoch 2
+  2497 12389, (aggregated by 12389 212.48.198.56)
+    202.232.0.2 from 202.232.0.2 (58.138.96.254)
+      Origin IGP, localpref 100, valid, external, best
+      path 7FE11C329FB0 RPKI State valid
+      rx pathid: 0, tx pathid: 0x0
+  Refresh Epoch 1
+  7660 2516 12389, (aggregated by 12389 212.48.198.56)
+    203.181.248.168 from 203.181.248.168 (203.181.248.168)
+      Origin IGP, localpref 100, valid, external
+      Community: 2516:1050 7660:9001
+      path 7FE165137A28 RPKI State valid
+      rx pathid: 0, tx pathid: 0
+  Refresh Epoch 1
+  49788 12552 12389, (aggregated by 12389 212.48.198.56)
+    91.218.184.60 from 91.218.184.60 (91.218.184.60)
+      Origin IGP, localpref 100, valid, external
+      Community: 12552:12000 12552:12100 12552:12101 12552:22000
+      Extended Community: 0x43:100:1
+      path 7FE16A95BB68 RPKI State valid
+      rx pathid: 0, tx pathid: 0
+  Refresh Epoch 1
+  1221 4637 5511 12389, (aggregated by 12389 212.48.198.56)
+   217.192.89.50 from 217.192.89.50 (138.187.128.158)
+      Origin IGP, localpref 100, valid, external
+      Community: 3303:1004 3303:1006 3303:1030 3303:3056
+      path 7FE0284654B0 RPKI State valid
+      rx pathid: 0, tx pathid: 0
+  Refresh Epoch 2
+  2497 12389, (aggregated by 12389 212.48.198.56)
+    202.232.0.2 from 202.232.0.2 (58.138.96.254)
+      Origin IGP, localpref 100, valid, external, best
+      path 7FE11C329FB0 RPKI State valid
+      rx pathid: 0, tx pathid: 0x0
+  Refresh Epoch 1
+  7660 2516 12389, (aggregated by 12389 212.48.198.56)
+    203.181.248.168 from 203.181.248.168 (203.181.248.168)
+      Origin IGP, localpref 100, valid, external
+      Community: 2516:1050 7660:9001
+      path 7FE165137A28 RPKI State valid
+      rx pathid: 0, tx pathid: 0
+  Refresh Epoch 1
+  49788 12552 12389, (aggregated by 12389 212.48.198.56)
+    91.218.184.60 from 91.218.184.60 (91.218.184.60)
+      Origin IGP, localpref 100, valid, external
+      Community: 12552:12000 12552:12100 12552:12101 12552:22000
+      Extended Community: 0x43:100:1
+      path 7FE16A95BB68 RPKI State valid
+      rx pathid: 0, tx pathid: 0
+  Refresh Epoch 1
+  1221 4637 5511 12389, (aggregated by 12389 212.48.198.56)
+    203.62.252.83 from 203.62.252.83 (203.62.252.83)
+      Origin IGP, localpref 100, valid, external
+      path 7FE109C845D0 RPKI State valid
+      rx pathid: 0, tx pathid: 0
+  Refresh Epoch 1
+  3257 1299 12389, (aggregated by 12389 212.48.198.56)
+    89.149.178.10 from 89.149.178.10 (213.200.83.26)
+      Origin IGP, metric 10, localpref 100, valid, external
+      Community: 3257:8794 3257:30052 3257:50001 3257:54900 3257:54901
+      path 7FE11BC90040 RPKI State valid
+      rx pathid: 0, tx pathid: 0
+      
+
+
+Создайте dummy0 интерфейс в Ubuntu. Добавьте несколько статических маршрутов. Проверьте таблицу маршрутизации.
 
 Ответ:
 
-В Windows:
 
-![Ipconfig](https://user-images.githubusercontent.com/95014681/162779560-4e61b96e-90b4-4a1b-aee5-ccfc8b0ea365.png)
 
-В Linux:
+Проверьте открытые TCP порты в Ubuntu, какие протоколы и приложения используют эти порты? Приведите несколько примеров.
 
-![Ip](https://user-images.githubusercontent.com/95014681/162780672-61f4f5ac-0a1c-488e-9b8a-48c3d98a03cf.png)
+Проверьте используемые UDP сокеты в Ubuntu, какие протоколы и приложения используют эти порты?
 
-
-Какой протокол используется для распознавания соседа по сетевому интерфейсу? Какой пакет и команды есть в Linux для этого?
-
-Ответ:
-
-Протокол Link Layer Discovery Protocol (LLDP) — протокол канального уровня, позволяющий сетевому оборудованию оповещать оборудование, работающее в локальной сети, о своём существовании и передавать ему свои характеристики, а также получать от него аналогичные сведения.
-
-В Linu для этого используется команда lldpctl из пакета lldpd.
-
-
-Какая технология используется для разделения L2 коммутатора на несколько виртуальных сетей? Какой пакет и команды есть в Linux для этого? Приведите пример конфига.
-
-Ответ:
-
-Технология VLAN (Virtual Local Area Network) — виртуальная локальная компьютерная сеть.
-На одном физическом порту может совместно существовать несколько VLAN-сетей, которые настраиваются программными средствами Linux, а не конфигурацией физических интерфейсов (но настройка самих интерфейсов тоже требуется). С помощью VLAN можно разделить сетевые ресурсы для использования различных сервисов.
-
-Для настройки в Linux еужно загрузить драйвер ядра Linux под названием 8021. А затем установит пакет VLAN и использовать команду vlanconfig.
-
-
-![VLAN](https://user-images.githubusercontent.com/95014681/162792376-46021213-63f3-4640-93f2-137088e675b5.png)
-
-![VLANConfig](https://user-images.githubusercontent.com/95014681/162794378-d137a271-80b1-4502-8cf8-05088439ed54.png)
-
-Какие типы агрегации интерфейсов есть в Linux? Какие опции есть для балансировки нагрузки? Приведите пример конфига.
-
-Ответ:
-
-Объединение сетевых карт в Linux можно осуществить с помощью драйвера bonding, он предоставляет методы для агрегирования нескольких сетевых интерфейсов в один логический. Поведение связанных интерфейсов зависит от режима. В общем случае, объединенные интерфейсы могут работать в режиме горячего резерва (отказоустойчивости) или в режиме балансировки нагрузки.
-
-Для начала необходимо установить драйвер bonding в ядро Линукс:
-
-vagrant@vagrant:/etc/network$ sudo modprobe bonding
-
-vagrant@vagrant:/etc/network$ lsmod | grep bond
-
-bonding               167936  0
-
-
-Затем установим утилиту ifenslave:
-
- vagrant@vagrant:/etc/network$ sudo apt install ifenslave
-
-![Bonding](https://user-images.githubusercontent.com/95014681/163002744-f51740bc-681f-42f1-8e70-7a45b5da4e67.png)
-
-Пример конфигурации:
-
-Для создания постоянного сетевого соединение, необходимо внести изменения в файл конфигурации сетевых интерфейсов /etc/network/interfaces:
-
-![BondingConfig](https://user-images.githubusercontent.com/95014681/163005521-bcb0df2a-ce83-4558-8a37-5d8ebda2e51a.png)
-
-
-Сколько IP адресов в сети с маской /29 ? Сколько /29 подсетей можно получить из сети с маской /24. Приведите несколько примеров /29 подсетей внутри сети 10.10.10.0/24.
-
-Ответ:
-
-![IPCalc](https://user-images.githubusercontent.com/95014681/163007820-d5ffc0d0-f15e-4c53-86ab-7c7bd023b86f.png)
-
-В сети с маской /29 8 адресов: один адрес сети, один широковещательный адрес и 6 хостов.
-
-В сети с маской /24 256 адресов: один адрес сети, один широковещательный адрес и 254 хостов.
-
-256:8=32 - столько сетей /29 можно получить в сети /24.
-
-Примеры подсетей /29 в сети /24:
-
-10.10.10.0/29
-
-10.10.10.8/29
-
-10.10.10.16/29
-
-10.10.10.24/29
-
-и так далее...
-
-
-Задача: вас попросили организовать стык между 2-мя организациями. Диапазоны 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16 уже заняты. Из какой подсети допустимо взять частные IP адреса? Маску выберите из расчета максимум 40-50 хостов внутри подсети.
-
-Ответ:
-
-Из частных подсетей еще остался доступен диапазон 100.64.0.0/10.
-
-Подберем сеть исходя из 50 хостов:
-
-![IPCalc_case](https://user-images.githubusercontent.com/95014681/163010227-9069a657-621d-4eb6-b1b1-780b2cb3561a.png)
-
-Таким образом нам подойдет сеть с 64-мя адресвми, например: 100.64.0.0/26.
-
-
-Как проверить ARP таблицу в Linux, Windows? Как очистить ARP кеш полностью? Как из ARP таблицы удалить только один нужный IP?
-
-Для Linux:
-
-![ARP_Linux](https://user-images.githubusercontent.com/95014681/163011584-2b25eb79-d797-43e5-ad68-14f88d3662ac.png)
-
-
-Для Windows:
-
-![ARP_Windows](https://user-images.githubusercontent.com/95014681/163011618-c32c849d-4c0a-4a1c-a66b-a98fc98cd25f.png)
-
-
-Очистить ARP кеш полностью для Linux:
-
-sudo ip -s -s neigh flush all
-
-Удалить только один нужный IP для Linux:
-
-sudo arp -d 192.168.0.102
-
-Очистить ARP кеш полностью для Windows:
-
-netsh interface ipv4 delete arpcache - Сброс кэша ARP для одного или всех интерфейсов.
-
-или
-
-netsh interface ipv4 delete neighbors - Сброс кэша ARP для одного или всех интерфейсов.
-
-Удалить только один нужный IP для Windows:
-
-arp -d 192.168.0.102
+Используя diagrams.net, создайте L3 диаграмму вашей домашней сети или любой другой сети, с которой вы работали.
 
 Задание для самостоятельной отработки (необязательно к выполнению)
-8*. Установите эмулятор EVE-ng.
+6*. Установите Nginx, настройте в режиме балансировщика TCP или UDP.
 
-Инструкция по установке - https://github.com/svmyasnikov/eve-ng
+7*. Установите bird2, настройте динамический протокол маршрутизации RIP.
 
-Выполните задания на lldp, vlan, bonding в эмуляторе EVE-ng.
+8*. Установите Netbox, создайте несколько IP префиксов, используя curl проверьте работу API.
 
-Как сдавать задания
-Обязательными к выполнению являются задачи без указания звездочки. Их выполнение необходимо для получения зачета и диплома о профессиональной переподготовке.
 
-Задачи со звездочкой (*) являются дополнительными задачами и/или задачами повышенной сложности. Они не являются обязательными к выполнению, но помогут вам глубже понять тему.
 
 
 
