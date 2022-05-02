@@ -218,11 +218,92 @@ Paths: (24 available, best #20, table default)
 
 Ответ:
 
+Запуск модуля dummy:
+
+vagrant@vagrant:~$ sudo -i
+
+
+root@vagrant:~# echo "dummy" > /etc/modules-load.d/dummy.conf
+
+root@vagrant:~# echo "options dummy numdummies=2" > /etc/modprobe.d/dummy.conf
+
+Настройка интерфейса dummy:
+
+root@vagrant:~# cat << "EOF" >> /etc/systemd/network/10-dummy0.netdev
+
+[NetDev]
+
+Name=dummy0
+
+Kind=dummy
+
+EOF
+
+root@vagrant:~# cat << "EOF" >> /etc/systemd/network/20-dummy0.network
+
+[Match]
+
+Name=dummy0
+
+
+[Network]
+
+Address=10.0.8.1/24
+
+EOF
+
+root@vagrant:~# systemctl restart systemd-networkd
+
+Добавим статический маршрут:
+
+root@vagrant:~# nano /etc/netplan/02-networkd.yaml
+network:
+  version: 2
+  ethernets:
+    eth0:
+      optional: true
+      addresses:
+        - 10.0.2.3/24
+      routes:
+        - to: 10.0.4.0/24
+          via: 10.0.2.2
+
+Перезагрузим машину:
+
+root@vagrant:~# shutdown -r
+
+Проверим таблицу маршрутизации:
+
+root@vagrant:~# ip route
+
+default via 10.0.2.2 dev eth0 proto dhcp src 10.0.2.15 metric 100
+
+10.0.2.0/24 dev eth0 proto kernel scope link src 10.0.2.3
+
+10.0.2.2 dev eth0 proto dhcp scope link src 10.0.2.15 metric 100
+
+10.0.4.0/24 via 10.0.2.2 dev eth0 proto static
+
+10.0.8.0/24 dev dummy0 proto kernel scope link src 10.0.8.1
+
+
+root@vagrant:~# ip route | grep static
+
+10.0.4.0/24 via 10.0.2.2 dev eth0 proto static
 
 
 Проверьте открытые TCP порты в Ubuntu, какие протоколы и приложения используют эти порты? Приведите несколько примеров.
 
+Ответ:
+
+![ss-tpan](https://user-images.githubusercontent.com/95014681/166230562-aadab7fb-e231-4ad8-8e92-ef31406670f0.png)
+
 Проверьте используемые UDP сокеты в Ubuntu, какие протоколы и приложения используют эти порты?
+
+Ответ:
+
+![ss-unap](https://user-images.githubusercontent.com/95014681/166231146-7d389262-065d-46be-a898-969480d48d35.png)
+
 
 Используя diagrams.net, создайте L3 диаграмму вашей домашней сети или любой другой сети, с которой вы работали.
 
