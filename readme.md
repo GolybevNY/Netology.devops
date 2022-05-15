@@ -38,6 +38,12 @@ $ sudo apt install apache
 
 Выполнено:
 
+![Testssl_avito_1](https://user-images.githubusercontent.com/95014681/168484959-4e828a53-7819-4e50-b45d-c6ebdf030181.png)
+
+![Testssl_avito_2](https://user-images.githubusercontent.com/95014681/168484967-519d0409-94e4-4fe4-ae1a-ac537a959502.png)
+
+![Testssl_avito_3](https://user-images.githubusercontent.com/95014681/168484973-4f78bc49-77c1-4fae-b4a7-86dffcc7acdf.png)
+
 
 Установите на Ubuntu ssh сервер, сгенерируйте новый приватный ключ. Скопируйте свой публичный ключ на другой сервер. Подключитесь к серверу по SSH-ключу.
 
