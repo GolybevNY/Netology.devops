@@ -29,8 +29,27 @@ $ sudo apt install apache
 ![SelfSignCRT](https://user-images.githubusercontent.com/95014681/167644143-5b053f79-7904-4c30-ac7d-c90d67027cf5.png)
 
 
-Настроим тестовый сайт для работы по HTTPS:
+Настроим сайт по умолчанию (Apache) для работы по HTTPS, создадим файл /etc/apache2/sites-available/your_domain_or_ip.conf и внесем следующую когфигурацию:
 
+
+![Apache site-conf](https://user-images.githubusercontent.com/95014681/168880297-8be4dd8d-ca7c-4ae2-a8af-9108f6bbd3b9.png)
+
+Затем активируем конфигурацию сайта по умолчанию с https:
+
+
+sudo a2ensite your_domain_or_ip.conf
+
+sudo systemctl reload apache2
+
+
+Выполним проброс портов из гостевой системы, добавим в vagrantfile:
+
+config.vm.network "forwarded_port", guest: 443, host: 33443
+
+
+Проверим:
+
+![https_selfsigned](https://user-images.githubusercontent.com/95014681/168879061-d0b5a682-ccb7-47fe-9d73-ac887e719bee.png)
 
 
 Проверьте на TLS уязвимости произвольный сайт в интернете (кроме сайтов МВД, ФСБ, МинОбр, НацБанк, РосКосмос, РосАтом, РосНАНО и любых госкомпаний, объектов КИИ, ВПК ... и тому подобное).
