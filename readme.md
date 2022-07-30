@@ -46,12 +46,25 @@ for result in result_os.split('\n'):
 
 ### Ваш скрипт:
 ```python
-???
+#!/usr/bin/env python3
+import os
+
+wd = os.getcwd()
+bash_command = ['cd '+wd, "git status"]
+#bash_command = ["cd ~/netology/sysadm-homeworks", "git status"]
+result_os = os.popen(' && '.join(bash_command)).read()
+#is_change = False
+for result in result_os.split('\n'):
+    if result.find('modified') != -1:
+        prepare_result = result.replace('\tmodified:   ', '')
+        print(wd + '/' + prepare_result)
+#        print(prepare_result)
+#        break
 ```
 
 ### Вывод скрипта при запуске при тестировании:
 ```
-???
+![Python_2](https://user-images.githubusercontent.com/95014681/181903805-9da1591f-1efc-46e1-be20-fe5f89e0e706.png)
 ```
 
 ## Обязательная задача 3
@@ -59,12 +72,28 @@ for result in result_os.split('\n'):
 
 ### Ваш скрипт:
 ```python
-???
+import os
+import sys
+
+
+#wd = os.getcwd()
+wd = sys.argv[1]
+#print('Каталог проверки: ', wd)
+bash_command = ['cd '+wd, "git status"]
+#bash_command = ["cd ~/netology/sysadm-homeworks", "git status"]
+result_os = os.popen(' && '.join(bash_command)).read()
+#is_change = False
+for result in result_os.split('\n'):
+    if result.find('modified') != -1:
+        prepare_result = result.replace('\tmodified:   ', '')
+        print(wd + '/' + prepare_result)
+#        print(prepare_result)
+#        break
 ```
 
 ### Вывод скрипта при запуске при тестировании:
 ```
-???
+![Python_3](https://user-images.githubusercontent.com/95014681/181904482-11bcfad9-c904-481e-913c-c3de1661dc45.png)
 ```
 
 ## Обязательная задача 4
