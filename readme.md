@@ -101,13 +101,45 @@ for result in result_os.split('\n'):
 
 ### Ваш скрипт:
 ```python
-???
+import os
+import socket
+from string import whitespace
+
+hosts = ["drive.google.com", "mail.google.com", "google.com"]
+fileList = []
+if not os.path.exists('host_test.log'):
+    open('host_test.log', 'w').close()
+    
+with open('host_test.log') as file:
+   for f in file:
+        fileList.append(f)
+
+with open('host_test.log', 'w+') as file:
+    for i in hosts:
+        iphost = socket.gethostbyname(i)
+        added = 0
+        for y in fileList:
+            inList = y.find(' ' + i)
+            if (inList != -1):
+                ipstr=y.replace('\n', '').split("  ")[1].translate({None: whitespace})
+                
+                if (ipstr == iphost):
+                    added = 0
+                    break
+                else:
+                    print("[ERROR] {} IP mismatch: {}  {}\n".format(i, ipstr, iphost))
+                    file.write("[ERROR] {} IP mismatch: {}  {}\n".format(i, ipstr, iphost))
+                    added = 1
+                    break
+        if (added == 0):
+            print(" {}  {}\n".format(i, iphost))
+            file.write(" {}  {}\n".format(i, iphost))
 ```
 
 ### Вывод скрипта при запуске при тестировании:
-```
-???
-```
+
+![Python_4](https://user-images.githubusercontent.com/95014681/181921548-608300c5-8f8a-4510-bff2-5424444ce87b.png)
+
 
 ## Дополнительное задание (со звездочкой*) - необязательно к выполнению
 
