@@ -56,6 +56,30 @@
 
 *Приложить вывод команд установленных версий каждой из программ, оформленный в markdown.*
 
+Выполнено:
+
+- VirtualBox:
+```
+gny@gny-HP-Notebook:~/vagrant/virt$ virtualbox --help | head -n 1
+Oracle VM VirtualBox VM Selector v6.1.34_Ubuntu
+```
+- Vagrant:
+```
+gny@gny-HP-Notebook:~/vagrant/virt$ vagrant --version
+Vagrant 2.3.0
+```
+
+- Ansible:
+```
+gny@gny-HP-Notebook:~/vagrant/virt$ ansible --version
+ansible 2.10.8
+  config file = None
+  configured module search path = ['/home/gny/.ansible/plugins/modules', '/usr/share/ansible/plugins/modules']
+  ansible python module location = /usr/lib/python3/dist-packages/ansible
+  executable location = /usr/bin/ansible
+  python version = 3.10.4 (main, Jun 29 2022, 12:14:53) [GCC 11.2.0]
+```
+
 ## Задача 4 (*)
 
 Воспроизвести практическую часть лекции самостоятельно.
@@ -64,4 +88,11 @@
 - Зайти внутрь ВМ, убедиться, что Docker установлен с помощью команды
 ```
 docker ps
+```
+Выполнено:
+
+```
+vagrant@server1:~$ docker ps -a
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+
 ```
