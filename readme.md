@@ -35,6 +35,7 @@ Hey, Netology
 Опубликуйте созданный форк в своем репозитории и предоставьте ответ в виде ссылки на https://hub.docker.com/username_repo.
 
 Выполнено:
+
 https://hub.docker.com/repository/docker/vvert0ff85/webserver/general
 
 ## Задача 2
@@ -49,13 +50,37 @@ https://hub.docker.com/repository/docker/vvert0ff85/webserver/general
 Сценарий:
 
 - Высоконагруженное монолитное java веб-приложение;
+---
+Думаю, что подойдет ВМ или физический сервер, ввиду высокого требования к ресурсам.
+---
 - Nodejs веб-приложение;
+---
+Думаю, что подойдет Docker, официальный образ есть в docker hub.
+---
 - Мобильное приложение c версиями для Android и iOS;
+---
+Подойдет Докер для создания набора контейнеров, поддерживающих разные версии приложений.  
+---
 - Шина данных на базе Apache Kafka;
+---
+В зависимости от нагрузки подойдет Докер и ВМ.
+---
 - Elasticsearch кластер для реализации логирования продуктивного веб-приложения - три ноды elasticsearch, два logstash и две ноды kibana;
+---
+Думаю, что подойдет Docker, для кластеризации используем средство Docker Swarm.
+---
 - Мониторинг-стек на базе Prometheus и Grafana;
+---
+Думаю, что подойдет Докер и ВМ. 
+---
 - MongoDB, как основное хранилище данных для java-приложения;
+---
+Думаю подойдет с Докер или ВМ с реализацией кластеров для отказоустойчивости на разных физических серверах.
+---
 - Gitlab сервер для реализации CI/CD процессов и приватный (закрытый) Docker Registry.
+---
+Думаю подойдет ВМ.
+---
 
 ## Задача 3
 
@@ -64,6 +89,34 @@ https://hub.docker.com/repository/docker/vvert0ff85/webserver/general
 - Подключитесь к первому контейнеру с помощью ```docker exec``` и создайте текстовый файл любого содержания в ```/data```;
 - Добавьте еще один файл в папку ```/data``` на хостовой машине;
 - Подключитесь во второй контейнер и отобразите листинг и содержание файлов в ```/data``` контейнера.
+
+Выполнено:
+```
+gny@gny-HP-Notebook:~/docker/data$ sudo docker run -it --rm -d --name centos -v $(pwd)/:/data centos:latest
+8048cda7d180a83bc84c4950ec4f43ce12519fece8dd5d026c9507860b710fc5
+gny@gny-HP-Notebook:~/docker/data$ sudo docker run -it --rm -d --name debian -v $(pwd)/:/data debian:latest
+84bbbc5a9e805a5f5091e51236c5a223def0c264f5f84130214a0222883a7285
+gny@gny-HP-Notebook:~/docker/data$ sudo docker ps
+CONTAINER ID   IMAGE           COMMAND                  CREATED          STATUS          PORTS                                   NAMES
+84bbbc5a9e80   debian:latest   "bash"                   16 seconds ago   Up 14 seconds                                           debian
+8048cda7d180   centos:latest   "/bin/bash"              29 seconds ago   Up 28 seconds                                           centos
+9f4aff89fd07   webserver       "/docker-entrypoint.…"   15 hours ago     Up 15 hours     0.0.0.0:8080->80/tcp, :::8080->80/tcp   web
+690baa3cf903   nginx           "/docker-entrypoint.…"   15 hours ago     Up 15 hours     80/tcp                                  determined_murdock
+gny@gny-HP-Notebook:~/docker/data$ sudo docker exec -it centos bash
+[root@8048cda7d180 /]# echo "Hello from centos container!" > /data/centos.txt
+[root@8048cda7d180 /]# exit
+exit
+gny@gny-HP-Notebook:~/docker/data$ echo "Hello from Host!" > host.txt
+gny@gny-HP-Notebook:~/docker/data$ sudo docker exec -it debian bash
+root@84bbbc5a9e80:/# ls /data/
+centos.txt  host.txt
+root@84bbbc5a9e80:/# cat /data/centos.txt /data/host.txt
+Hello from centos container!
+Hello from Host!
+root@84bbbc5a9e80:/# exit
+exit
+
+```
 
 ## Задача 4 (*)
 
