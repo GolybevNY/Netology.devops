@@ -54,11 +54,11 @@
 </p>
 
 <p align="center">
-  <img width="1200" height="600" src="./Pictures/Node01.png">
+  <img width="1200" height="100" src="./Pictures/Node01.png">
 </p>
 
 <p align="center">
-  <img width="1200" height="600" src="./Pictures/Node02.png">
+  <img width="1200" height="100" src="./Pictures/Node02.png">
 </p>
 
 ### Как cдавать задание
